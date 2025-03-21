@@ -1,0 +1,43 @@
+<div class="container mx-auto px-4 py-8">
+  <mat-card
+    *ngFor="let pessoa of listaPessoasDesaparecidas"
+    class="pessoa-card mb-6 hover:shadow-lg transition-shadow duration-300 rounded-lg"
+  >
+    <mat-card-header class="bg-gray-50 p-4">
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title class="text-xl font-semibold text-gray-800">{{
+        pessoa.nome
+      }}</mat-card-title>
+      <mat-card-subtitle class="text-gray-600">{{
+        pessoa.sexo
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <img
+      mat-card-image
+      [src]="pessoa.urlFoto"
+      alt="Imagem de {{ pessoa.nome }}"
+      class="w-full h-64 object-cover"
+    />
+    <mat-card-content class="p-4">
+      <p class="text-gray-700 space-y-2">
+        <span class="block">Idade: {{ pessoa.idade }}</span>
+        <span class="block"
+          >Desaparecido desde:
+          {{ pessoa.ultimaOcorrencia.dtDesaparecimento | date }}</span
+        >
+        <span class="block"
+          >Último local visto:
+          {{ pessoa.ultimaOcorrencia.dataLocalizacao | date }}</span
+        >
+      </p>
+    </mat-card-content>
+    <mat-card-actions class="p-4 bg-gray-50">
+      <button
+        mat-button
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+      >
+        Mais Informações
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
