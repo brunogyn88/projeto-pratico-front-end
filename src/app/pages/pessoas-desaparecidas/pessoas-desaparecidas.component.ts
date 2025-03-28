@@ -21,6 +21,7 @@ export class PessoasDesaparecidasComponent implements OnInit {
   getPessoasDesaparecidas(): void {
     this.pessoasDesaparecidasService.getPessoasDesaparecidas().subscribe({
       next: (pessoas: PessoaDesaparecida[]) => {
+        debugger;
         this.listaPessoasDesaparecidas = pessoas;
       },
       error: (err: any) => {

@@ -23,11 +23,13 @@
         <span class="block">Idade: {{ pessoa.idade }}</span>
         <span class="block"
           >Desaparecido desde:
-          {{ pessoa.ultimaOcorrencia.dtDesaparecimento | date }}</span
+          {{
+            pessoa.ultimaOcorrencia.dtDesaparecimento | date : "dd/MM/yyyy"
+          }}</span
         >
         <span class="block"
           >Último local visto:
-          {{ pessoa.ultimaOcorrencia.dataLocalizacao | date }}</span
+          {{ pessoa.ultimaOcorrencia.localDesaparecimentoConcat }}</span
         >
       </p>
     </mat-card-content>
