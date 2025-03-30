@@ -1,1 +1,71 @@
-<p>pessoas-detalhamento works!</p>
+<div class="p-6 w-full mx-auto bg-white rounded-xl shadow-md space-y-4">
+  <div class="flex items-center space-x-4">
+    <img
+      class="w-48 h-48 rounded-full border-4 border-gray-300"
+      [src]="pessoa?.urlFoto"
+      alt="Foto da pessoa"
+    />
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">{{ pessoa?.nome }}</h1>
+      <p class="text-lg text-gray-600">Idade: {{ pessoa?.idade }} anos</p>
+      <p class="text-lg text-gray-600">Sexo: {{ pessoa?.sexo }}</p>
+      <p class="text-lg text-gray-600">
+        Data do desaparecimento:
+        {{ pessoa?.ultimaOcorrencia?.dtDesaparecimento | date : "dd/MM/YYYY" }}
+      </p>
+      <p class="text-lg text-gray-600">
+        Localização: {{ pessoa?.ultimaOcorrencia?.localDesaparecimentoConcat }}
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <mat-card class="p-4 bg-gray-100">
+      <h2 class="text-xl font-semibold text-gray-800">Situação</h2>
+      <p
+        class="mt-2 text-2xl font-bold"
+        [ngClass]="{
+          'text-red-600': !pessoa?.ultimaOcorrencia?.encontradoVivo,
+          'text-green-600': pessoa?.ultimaOcorrencia?.encontradoVivo
+        }"
+      >
+        {{
+          pessoa?.ultimaOcorrencia?.encontradoVivo
+            ? "Localizado"
+            : "Desaparecido"
+        }}
+      </p>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="p-4 bg-gray-100">
+      <h2 class="text-xl font-semibold text-gray-800">Descrição</h2>
+      <p class="mt-2 text-gray-600">
+        Informação:
+        {{ pessoa?.ultimaOcorrencia?.ocorrenciaEntrevDesapDTO?.informacao
+        }}<br />
+        Vestimento:
+        {{
+          pessoa?.ultimaOcorrencia?.ocorrenciaEntrevDesapDTO
+            ?.vestimentasDesaparecido
+        }}<br />
+      </p>
+    </mat-card>
+  </div>
+
+  <div class="mt-6 flex justify-between">
+    <button
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
+      (click)="voltar()"
+    >
+      Voltar
+    </button>
+    <button
+      class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer"
+      (click)="incluirMaisInformacoes()"
+    >
+      Incluir mais informações
+    </button>
+  </div>
+</div>

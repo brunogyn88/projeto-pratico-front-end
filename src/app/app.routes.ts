@@ -8,4 +8,11 @@ export const routes: Routes = [
         './pages/pessoas-desaparecidas/pessoas-desaparecidas.component'
       ).then((m) => m.PessoasDesaparecidasComponent),
   },
+  {
+    path: 'pessoas-detalhamento/:id',
+    loadComponent: () =>
+      import(
+        './pages/pessoas-detalhamento/pessoas-detalhamento.component'
+      ).then((m) => m.PessoasDetalhamentoComponent),
+  },
 ];

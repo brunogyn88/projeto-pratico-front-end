@@ -8,12 +8,13 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pessoas-desaparecidas',
@@ -42,7 +43,8 @@ export class PessoasDesaparecidasComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private formBuilder: FormBuilder,
-    private spinnerService: NgxSpinnerService
+    private spinnerService: NgxSpinnerService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -132,5 +134,7 @@ export class PessoasDesaparecidasComponent implements OnInit {
     this.fetchPessoasDesaparecidas(this.paginaAtual);
   }
 
-  redirectToDetalhamento(id: number): void {}
+  redirectToDetalhamento(id: number): void {
+    this.router.navigate(['/pessoas-detalhamento', id]);
+  }
 }

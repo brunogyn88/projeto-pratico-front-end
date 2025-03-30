@@ -41,9 +41,9 @@ export class ApiService {
     );
   }
 
-  getDesaparecido(pessoa_id: number): Observable<PessoaDesaparecida[]> {
-    return this.http.get<PessoaDesaparecida[]>(
-      `${this.apiUrl}/pessoas=${pessoa_id}`
+  getDesaparecido(pessoa_id: number): Observable<PessoaDesaparecida> {
+    return this.http.get<PessoaDesaparecida>(
+      `${this.apiUrl}/pessoas/${pessoa_id}`
     );
   }
 
