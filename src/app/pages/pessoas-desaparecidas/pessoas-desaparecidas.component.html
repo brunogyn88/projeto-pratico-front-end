@@ -1,10 +1,13 @@
 <ngx-spinner type="ball-atom"></ngx-spinner>
 <div class="container mx-auto px-4 py-8">
   <div class="filters mb-6">
-    <form class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <form
+      [formGroup]="formGroup"
+      class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+    >
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Nome</mat-label>
-        <input matInput type="text" formControl="nome" name="nome" />
+        <input matInput type="text" formControlName="nome" name="nome" />
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="w-full">
@@ -12,7 +15,7 @@
         <input
           matInput
           type="number"
-          formControl="faixaIdadeInicial"
+          formControlName="faixaIdadeInicial"
           name="faixaIdadeInicial"
         />
       </mat-form-field>
@@ -22,14 +25,14 @@
         <input
           matInput
           type="number"
-          formControl="faixaIdadeFinal"
+          formControlName="faixaIdadeFinal"
           name="faixaIdadeFinal"
         />
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Sexo</mat-label>
-        <mat-select formControl="sexo" name="sexo">
+        <mat-select formControlName="sexo" name="sexo">
           <mat-option value="">Selecione</mat-option>
           <mat-option value="MASCULINO">Masculino</mat-option>
           <mat-option value="FEMININO">Feminino</mat-option>
@@ -38,7 +41,7 @@
 
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Status</mat-label>
-        <mat-select formControl="status" name="status">
+        <mat-select formControlName="status" name="status">
           <mat-option value="">Selecione</mat-option>
           <mat-option value="DESAPARECIDO">Desaparecido</mat-option>
           <mat-option value="LOCALIZADO">Localizado</mat-option>
@@ -48,8 +51,8 @@
       <button
         mat-button
         type="button"
-        class="bg-blue-500 text-white hover:bg-blue-600 rounded p-5 cursor-pointer"
-        (click)="pesquisar(0)"
+        class="bg-blue-500 text-white hover:bg-blue-600 rounded p-5 cursor-pointer mb-4"
+        (click)="fetchPessoasDesaparecidas(0)"
       >
         Pesquisar
       </button>
@@ -57,7 +60,8 @@
   </div>
   <mat-card
     *ngFor="let pessoa of listaPessoasDesaparecidas"
-    class="pessoa-card mb-6 hover:shadow-lg transition-shadow duration-300 rounded-lg"
+    class="pessoa-card mb-6 hover:shadow-lg transition-shadow duration-300 rounded-lg cursor-pointer"
+    (click)="redirectToDetalhamento(pessoa.id)"
   >
     <mat-card-header class="bg-gray-50 p-4">
       <div mat-card-avatar class="example-header-image"></div>
@@ -99,10 +103,10 @@
         [length]="totalRegistros"
         [pageSize]="5"
         [pageSizeOptions]="[5, 10, 25, 100]"
-        (page)="pesquisar($event.pageIndex)"
+        (page)="fetchPessoasDesaparecidas($event.pageIndex)"
       ></mat-paginator>
       <p class="mt-4 text-gray-600">
-        Página {{ paginaAtual + 1 }} de {{ totalPaginas + 1 }}
+        Página {{ paginaAtual + 1 }} de {{ totalPaginas }}
       </p>
     </div>
   </div>

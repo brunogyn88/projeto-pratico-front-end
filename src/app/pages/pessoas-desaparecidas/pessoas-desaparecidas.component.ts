@@ -8,11 +8,12 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pessoas-desaparecidas',
@@ -20,6 +21,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
   styleUrl: './pessoas-desaparecidas.component.scss',
   imports: [
     MatCardModule,
+    ReactiveFormsModule,
     CommonModule,
     DatePipe,
     MatFormFieldModule,
@@ -32,25 +34,24 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 export class PessoasDesaparecidasComponent implements OnInit {
   listaPessoasDesaparecidas: PessoaDesaparecida[] = [];
   formGroup: any;
-  paginaAtual: number = 1;
+  paginaAtual: number = 0;
   totalPaginas: number = 0;
-  itensPorPagina: number = 5;
+  itensPorPagina: number = 10;
   totalRegistros: number = 0;
 
   constructor(
-    private pessoasDesaparecidasService: ApiService,
-    private fb: FormBuilder,
-    private spinner: NgxSpinnerService
+    private apiService: ApiService,
+    private formBuilder: FormBuilder,
+    private spinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
-    // this.getPessoasDesaparecidas();
-    this.initialFormGroup();
-    this.pesquisar(this.paginaAtual);
+    this.initializeForm();
+    this.fetchPessoasDesaparecidas(this.paginaAtual);
   }
 
-  initialFormGroup(): void {
-    this.formGroup = this.fb.group({
+  private initializeForm(): void {
+    this.formGroup = this.formBuilder.group({
       nome: [''],
       faixaIdadeInicial: [null],
       faixaIdadeFinal: [null],
@@ -59,66 +60,77 @@ export class PessoasDesaparecidasComponent implements OnInit {
     });
   }
 
-  getPessoasDesaparecidas(): void {
-    this.pessoasDesaparecidasService.getPessoasDesaparecidas().subscribe({
-      next: (pessoas: PessoaDesaparecida[]) => {
-        this.listaPessoasDesaparecidas = pessoas;
-      },
-      error: (err: any) => {
-        console.error('Error fetching pessoas desaparecidas', err);
-      },
-    });
-  }
-  async pesquisar(pagina: number): Promise<void> {
-    this.spinner.show();
-    if (this.formGroup.valid) {
-      const params = new HttpParams()
-        .set('nome', this.formGroup.get('nome')?.value || '')
-        .set(
-          'faixaIdadeInicial',
-          this.formGroup.get('faixaIdadeInicial')?.value || ''
-        )
-        .set(
-          'faixaIdadeFinal',
-          this.formGroup.get('faixaIdadeFinal')?.value || ''
-        )
-        .set('porPagina', this.itensPorPagina.toString() || '5')
-        .set('pagina', this.paginaAtual.toString() || '0');
-      this.paginaAtual = pagina;
-      this.itensPorPagina = 5;
-      this.totalPaginas = 0;
-      this.totalRegistros = 0;
-      await this.pessoasDesaparecidasService
+  async fetchPessoasDesaparecidas(pagina: number): Promise<void> {
+    if (!this.formGroup.valid) {
+      return;
+    }
+
+    this.spinnerService.show();
+    try {
+      const params = this.createHttpParams(pagina);
+      const response = await this.apiService
         .getDesaparecidos(params)
-        .subscribe({
-          next: (response: PaginatedResponse<PessoaDesaparecida>) => {
-            this.spinner.hide();
-            this.listaPessoasDesaparecidas = response.content;
-            this.totalPaginas = response.totalPages;
-            this.totalRegistros = response.totalElements;
-            this.paginaAtual = response.number;
-            this.itensPorPagina = response.size;
-          },
-          error: (err: any) => {
-            this.spinner.hide();
-            this.listaPessoasDesaparecidas = [];
-            this.totalPaginas = 0;
-            this.totalRegistros = 0;
-            this.paginaAtual = 0;
-            this.itensPorPagina = 0;
-            this.formGroup.reset();
-            this.initialFormGroup();
-            console.error('Error fetching pessoas desaparecidas', err);
-          },
-        });
+        .toPromise();
+
+      if (response) {
+        this.updatePagination(response);
+        this.listaPessoasDesaparecidas = response.content || [];
+      }
+    } catch (error) {
+      this.handleFetchError(error);
+    } finally {
+      this.spinnerService.hide();
     }
   }
 
-  onPageChange(event: any): void {
-    this.paginaAtual = event.pageIndex + 1; // pageIndex is zero-based
-    this.itensPorPagina = event.pageSize;
-    this.totalPaginas = event.length;
-    this.totalRegistros = event.length;
-    this.pesquisar(this.paginaAtual);
+  private createHttpParams(pagina: number): HttpParams {
+    const { nome, faixaIdadeInicial, faixaIdadeFinal, sexo, status } =
+      this.formGroup.value;
+
+    return new HttpParams()
+      .set('nome', nome || '')
+      .set('faixaIdadeInicial', faixaIdadeInicial || '')
+      .set('faixaIdadeFinal', faixaIdadeFinal || '')
+      .set('sexo', sexo || '')
+      .set('status', status || '')
+      .set('porPagina', this.itensPorPagina.toString())
+      .set('pagina', pagina.toString());
   }
+
+  private updatePagination(
+    response: PaginatedResponse<PessoaDesaparecida>
+  ): void {
+    this.listaPessoasDesaparecidas = response.content;
+    this.totalPaginas = response.totalPages;
+    this.totalRegistros = response.totalElements;
+    this.paginaAtual = response.number;
+    this.itensPorPagina = response.size;
+  }
+
+  private handleFetchError(error: any): void {
+    console.error('Error fetching pessoas desaparecidas:', error);
+    this.resetPagination();
+    this.resetForm();
+  }
+
+  private resetPagination(): void {
+    this.listaPessoasDesaparecidas = [];
+    this.totalPaginas = 0;
+    this.totalRegistros = 0;
+    this.paginaAtual = 0;
+    this.itensPorPagina = 0;
+  }
+
+  private resetForm(): void {
+    this.formGroup.reset();
+    this.initializeForm();
+  }
+
+  onPageChange(event: any): void {
+    this.paginaAtual = event.pageIndex;
+    this.itensPorPagina = event.pageSize;
+    this.fetchPessoasDesaparecidas(this.paginaAtual);
+  }
+
+  redirectToDetalhamento(id: number): void {}
 }
