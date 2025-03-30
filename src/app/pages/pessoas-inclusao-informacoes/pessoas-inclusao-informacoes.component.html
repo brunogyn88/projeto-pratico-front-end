@@ -1,1 +1,65 @@
-<p>pessoas-inclusao-informacoes works!</p>
+<div class="p-6 w-full mx-auto bg-white rounded-xl shadow-md space-y-4">
+  <h2 class="text-xl font-bold text-gray-800">Formulário de Inclusão</h2>
+  <form [formGroup]="form">
+    <!-- Campo Informação -->
+    <mat-form-field class="w-full" appearance="fill">
+      <mat-label>Informação a respeito da visualização da Pessoa</mat-label>
+      <textarea
+        matInput
+        placeholder="Digite a informação"
+        rows="6"
+        required
+        formControlName="informacao"
+        name="informacao"
+      ></textarea>
+    </mat-form-field>
+
+    <!-- Campo Descrição -->
+    <mat-form-field class="w-full" appearance="fill">
+      <mat-label>Descrição da foto/imagem</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder="Digite a descrição"
+        required
+        formControlName="descricao"
+        name="descricao"
+      />
+    </mat-form-field>
+
+    <!-- Campo Data -->
+    <mat-form-field class="w-full" appearance="fill">
+      <mat-label>Data visualização da Pessoa</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="data"
+        name="data"
+      />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Campo ocoId (Upload de Imagem) -->
+    <div class="w-full">
+      <label class="block text-sm font-medium text-gray-700 mb-2"
+        >Anexar Imagem/Foto da visualização da Pessoa</label
+      >
+      <input
+        type="file"
+        accept="image/*"
+        formControlName="ocoId"
+        name="ocoId"
+        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 cursor-pointer"
+      />
+    </div>
+
+    <!-- Botão de Enviar -->
+    <button mat-raised-button color="primary" class="w-full mt-4">
+      Enviar
+    </button>
+  </form>
+</div>

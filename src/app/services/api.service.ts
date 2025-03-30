@@ -47,10 +47,12 @@ export class ApiService {
     );
   }
 
-  salvaInfomacoesDesaparecido() {
+  salvaInfomacoesDesaparecido(informacoes: FormData): Observable<any> {
+    const headers = { 'Content-Type': 'multipart/form-data' };
     return this.http.post<any>(
       `${this.apiUrl}/ocorrencias/informacoes-desaparecido`,
-      {}
+      informacoes,
+      { headers }
     );
   }
 }

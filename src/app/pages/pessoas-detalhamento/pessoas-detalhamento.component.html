@@ -1,9 +1,12 @@
+<ngx-spinner type="ball-atom"></ngx-spinner>
 <div class="p-6 w-full mx-auto bg-white rounded-xl shadow-md space-y-4">
   <div class="flex items-center space-x-4">
     <img
       class="w-48 h-48 rounded-full border-4 border-gray-300"
-      [src]="pessoa?.urlFoto"
       alt="Foto da pessoa"
+      [src]="pessoa?.urlFoto || 'assets/sem-imagem.png'"
+      alt="Imagem de {{ pessoa?.nome }}"
+      (error)="onImageError($event)"
     />
     <div>
       <h1 class="text-2xl font-bold text-gray-800">{{ pessoa?.nome }}</h1>
@@ -16,6 +19,9 @@
       <p class="text-lg text-gray-600">
         Localização: {{ pessoa?.ultimaOcorrencia?.localDesaparecimentoConcat }}
       </p>
+      <span class="text-lg text-gray-600"
+        >Vivo: {{ pessoa?.vivo ? "Sim" : "Não" }}</span
+      >
     </div>
   </div>
 
@@ -31,8 +37,8 @@
       >
         {{
           pessoa?.ultimaOcorrencia?.encontradoVivo
-            ? "Localizado"
-            : "Desaparecido"
+            ? "Localizado(a)"
+            : "Desaparecido(a)"
         }}
       </p>
     </mat-card>
@@ -43,12 +49,14 @@
       <h2 class="text-xl font-semibold text-gray-800">Descrição</h2>
       <p class="mt-2 text-gray-600">
         Informação:
-        {{ pessoa?.ultimaOcorrencia?.ocorrenciaEntrevDesapDTO?.informacao
+        {{
+          pessoa?.ultimaOcorrencia?.ocorrenciaEntrevDesapDTO?.informacao ??
+            "Não informado"
         }}<br />
         Vestimento:
         {{
           pessoa?.ultimaOcorrencia?.ocorrenciaEntrevDesapDTO
-            ?.vestimentasDesaparecido
+            ?.vestimentasDesaparecido ?? "Não informado"
         }}<br />
       </p>
     </mat-card>

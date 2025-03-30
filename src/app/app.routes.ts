@@ -15,11 +15,4 @@ export const routes: Routes = [
         './pages/pessoas-detalhamento/pessoas-detalhamento.component'
       ).then((m) => m.PessoasDetalhamentoComponent),
   },
-  {
-    path: 'pessoas-inclusao-informacoes/:id',
-    loadComponent: () =>
-      import(
-        './pages/pessoas-inclusao-informacoes/pessoas-inclusao-informacoes.component'
-      ).then((m) => m.PessoasInclusaoInformacoesComponent),
-  },
 ];
