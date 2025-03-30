@@ -137,4 +137,8 @@ export class PessoasDesaparecidasComponent implements OnInit {
   redirectToDetalhamento(id: number): void {
     this.router.navigate(['/pessoas-detalhamento', id]);
   }
+
+  onImageError(event: any): void {
+    event.target.src = 'src/assets/images/sem_foto.png';
+  }
 }

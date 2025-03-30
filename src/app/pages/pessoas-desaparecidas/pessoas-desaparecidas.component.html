@@ -3,7 +3,7 @@
   <div class="filters mb-6">
     <form
       [formGroup]="formGroup"
-      class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+      class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end"
     >
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Nome</mat-label>
@@ -58,45 +58,48 @@
       </button>
     </form>
   </div>
-  <mat-card
-    *ngFor="let pessoa of listaPessoasDesaparecidas"
-    class="pessoa-card mb-6 hover:shadow-lg transition-shadow duration-300 rounded-lg cursor-pointer"
-    (click)="redirectToDetalhamento(pessoa.id)"
-  >
-    <mat-card-header class="bg-gray-50 p-4">
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title class="text-xl font-semibold text-gray-800">{{
-        pessoa.nome
-      }}</mat-card-title>
-      <mat-card-subtitle class="text-gray-600">{{
-        pessoa.sexo
-      }}</mat-card-subtitle>
-    </mat-card-header>
-    <div class="flex flex-col md:flex-row items-start">
-      <img
-        mat-card-image
-        [src]="pessoa.urlFoto"
-        alt="Imagem de {{ pessoa.nome }}"
-        class="w-full md:w-40 h-auto object-contain mr-4"
-        style="width: 120px"
-      />
-      <mat-card-content class="p-4 flex-1">
-        <p class="text-gray-700 space-y-2">
-          <span class="block">Idade: {{ pessoa.idade }}</span>
-          <span class="block"
-            >Desaparecido desde:
-            {{
-              pessoa.ultimaOcorrencia.dtDesaparecimento | date : "dd/MM/yyyy"
-            }}</span
-          >
-          <span class="block"
-            >Último local visto:
-            {{ pessoa.ultimaOcorrencia.localDesaparecimentoConcat }}</span
-          >
-        </p>
-      </mat-card-content>
-    </div>
-  </mat-card>
+  <div class="h-[72vh] overflow-y-auto">
+    <mat-card
+      *ngFor="let pessoa of listaPessoasDesaparecidas"
+      class="pessoa-card mb-6 hover:shadow-lg transition-shadow duration-300 rounded-lg cursor-pointer inline-block min-w-full"
+      (click)="redirectToDetalhamento(pessoa.id)"
+    >
+      <mat-card-header class="bg-gray-50 p-4">
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title class="text-xl font-semibold text-gray-800">{{
+          pessoa.nome
+        }}</mat-card-title>
+        <mat-card-subtitle class="text-gray-600">{{
+          pessoa.sexo
+        }}</mat-card-subtitle>
+      </mat-card-header>
+      <div class="flex flex-col md:flex-row items-start">
+        <img
+          mat-card-image
+          [src]="pessoa.urlFoto || 'src/assets/images/sem_foto.png'"
+          alt="Imagem de {{ pessoa.nome }}"
+          class="w-full md:w-40 h-auto object-contain mr-4"
+          style="width: 120px"
+          (error)="onImageError($event)"
+        />
+        <mat-card-content class="p-4 flex-1">
+          <p class="text-gray-700 space-y-2">
+            <span class="block">Idade: {{ pessoa.idade }}</span>
+            <span class="block"
+              >Desaparecido desde:
+              {{
+                pessoa.ultimaOcorrencia.dtDesaparecimento | date : "dd/MM/yyyy"
+              }}</span
+            >
+            <span class="block"
+              >Último local visto:
+              {{ pessoa.ultimaOcorrencia.localDesaparecimentoConcat }}</span
+            >
+          </p>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  </div>
   <div class="pagination flex justify-center mt-6 items-center w-full">
     <div class="flex flex-col items-center">
       <mat-paginator
@@ -105,9 +108,6 @@
         [pageSizeOptions]="[5, 10, 25, 100]"
         (page)="fetchPessoasDesaparecidas($event.pageIndex)"
       ></mat-paginator>
-      <p class="mt-4 text-gray-600">
-        Página {{ paginaAtual + 1 }} de {{ totalPaginas }}
-      </p>
     </div>
   </div>
 </div>
