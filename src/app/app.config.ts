@@ -16,5 +16,11 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(),
     provideAnimations(),
+    {
+      provide: 'getPrerenderParams',
+      useValue: () => ({
+        routes: [], // Nenhuma rota dinâmica será pré-renderizada
+      }),
+    },
   ],
 };

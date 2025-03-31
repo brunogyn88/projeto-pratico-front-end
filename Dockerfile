@@ -1,5 +1,5 @@
 # Etapa de build do Angular
-FROM node:18.19.0 AS build
+FROM node:18.19.1 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
