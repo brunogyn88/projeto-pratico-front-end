@@ -14,16 +14,6 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  getMotivos(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/ocorrencias/motivos`);
-  }
-
-  getPessoasDesaparecidas(): Observable<PessoaDesaparecida[]> {
-    return this.http.get<PessoaDesaparecida[]>(
-      `${this.apiUrl}/pessoas/aberto/dinamico`
-    );
-  }
-
   getDesaparecidos(
     params: HttpParams
   ): Observable<PaginatedResponse<PessoaDesaparecida>> {
@@ -32,12 +22,6 @@ export class ApiService {
       {
         params: params,
       }
-    );
-  }
-
-  getOcorrencia(ocorrencia_id: number): Observable<PessoaDesaparecida[]> {
-    return this.http.get<PessoaDesaparecida[]>(
-      `${this.apiUrl}/ocorrencias/informacoes-desaparecido?ocorrenciald=${ocorrencia_id}`
     );
   }
 

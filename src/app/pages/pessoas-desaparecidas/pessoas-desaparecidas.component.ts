@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pessoas-desaparecidas',
+  standalone: true,
   templateUrl: './pessoas-desaparecidas.component.html',
   styleUrl: './pessoas-desaparecidas.component.scss',
   imports: [
@@ -52,7 +53,7 @@ export class PessoasDesaparecidasComponent implements OnInit {
     this.fetchPessoasDesaparecidas(this.paginaAtual);
   }
 
-  private initializeForm(): void {
+  public initializeForm(): void {
     this.formGroup = this.formBuilder.group({
       nome: [''],
       faixaIdadeInicial: [null],
@@ -85,7 +86,7 @@ export class PessoasDesaparecidasComponent implements OnInit {
     }
   }
 
-  private createHttpParams(pagina: number): HttpParams {
+  public createHttpParams(pagina: number): HttpParams {
     const { nome, faixaIdadeInicial, faixaIdadeFinal, sexo, status } =
       this.formGroup.value;
 
@@ -99,7 +100,7 @@ export class PessoasDesaparecidasComponent implements OnInit {
       .set('pagina', pagina.toString());
   }
 
-  private updatePagination(
+  public updatePagination(
     response: PaginatedResponse<PessoaDesaparecida>
   ): void {
     this.listaPessoasDesaparecidas = response.content;
@@ -109,13 +110,12 @@ export class PessoasDesaparecidasComponent implements OnInit {
     this.itensPorPagina = response.size;
   }
 
-  private handleFetchError(error: any): void {
-    console.error('Error fetching pessoas desaparecidas:', error);
+  public handleFetchError(error: any): void {
     this.resetPagination();
     this.resetForm();
   }
 
-  private resetPagination(): void {
+  public resetPagination(): void {
     this.listaPessoasDesaparecidas = [];
     this.totalPaginas = 0;
     this.totalRegistros = 0;
@@ -123,7 +123,7 @@ export class PessoasDesaparecidasComponent implements OnInit {
     this.itensPorPagina = 0;
   }
 
-  private resetForm(): void {
+  public resetForm(): void {
     this.formGroup.reset();
     this.initializeForm();
   }

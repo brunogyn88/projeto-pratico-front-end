@@ -59,7 +59,6 @@ export class PessoasDetalhamentoComponent implements OnInit {
   }
 
   private handlePessoaDetalhesError(error: any): void {
-    console.error('Erro ao buscar ocorrência:', error);
     this.spinnerService.hide();
   }
 

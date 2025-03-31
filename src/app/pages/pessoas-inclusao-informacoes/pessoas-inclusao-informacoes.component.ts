@@ -20,24 +20,18 @@ import {
   DateAdapter,
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
-  MAT_NATIVE_DATE_FORMATS,
   MatNativeDateModule,
-  NativeDateAdapter,
 } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { ApiService } from '../../services/api.service';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 const MY_DATE_FORMAT = {
   parse: {
-    dateInput: 'DD/MM/YYYY', // this is how your date will be parsed from Input
+    dateInput: 'DD/MM/YYYY',
   },
   display: {
-    dateInput: 'DD/MM/YYYY', // this is how your date will get displayed on the Input
+    dateInput: 'DD/MM/YYYY',
     monthYearLabel: 'MMMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',
@@ -66,6 +60,7 @@ const MY_DATE_FORMAT = {
     },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT },
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PessoasInclusaoInformacoesComponent implements OnInit {
   form: FormGroup;
@@ -73,11 +68,17 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
-    private dialog: MatDialogRef<PessoasInclusaoInformacoesComponent>,
+    private dialogRef: MatDialogRef<PessoasInclusaoInformacoesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private spinnerService: NgxSpinnerService
   ) {
-    this.form = this.fb.group({
+    this.form = this.createForm();
+  }
+
+  ngOnInit(): void {}
+
+  private createForm(): FormGroup {
+    return this.fb.group({
       informacao: ['', Validators.required],
       descricao: ['', Validators.required],
       data: [null, Validators.required],
@@ -85,41 +86,60 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    console.log('Dialog Data:', this.data);
+  onSubmit(): void {
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.spinnerService.show();
+    const formData = this.buildFormData();
+
+    this.apiService.salvaInfomacoesDesaparecido(formData).subscribe({
+      next: (response) => this.handleSuccess(response),
+      error: (error) => this.handleError(error),
+    });
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      this.spinnerService.show();
-      const formData = new FormData();
-      formData.append('informacao', this.form.get('informacao')?.value);
-      formData.append('descricao', this.form.get('descricao')?.value);
-      const dataValue = this.form.get('data')?.value;
-      if (dataValue) {
-        const dataFormatada = new Date(dataValue).toISOString().split('T')[0];
-        formData.append('data', dataFormatada);
-      }
+  private buildFormData(): FormData {
+    const formData = new FormData();
+    formData.append('informacao', this.form.get('informacao')?.value);
+    formData.append('descricao', this.form.get('descricao')?.value);
 
-      formData.append('ocoId', this.data?.id.toString());
-
-      const fileInput = document.querySelector(
-        'input[type="file"]'
-      ) as HTMLInputElement;
-      if (fileInput?.files?.length) {
-        formData.append('files', fileInput.files[0]);
-      }
-
-      this.apiService.salvaInfomacoesDesaparecido(formData).subscribe({
-        next: (response) => {
-          this.spinnerService.hide();
-          this.dialog.close(response);
-        },
-        error: (error) => {
-          this.spinnerService.hide();
-          console.error('Erro ao salvar informações', error);
-        },
-      });
+    const formattedDate = this.formatDate(this.form.get('data')?.value);
+    if (formattedDate) {
+      formData.append('data', formattedDate);
     }
+
+    formData.append('ocoId', this.data?.id.toString());
+
+    const file = this.getSelectedFile();
+    if (file) {
+      formData.append('files', file);
+    }
+
+    return formData;
+  }
+
+  private formatDate(date: any): string | null {
+    if (!date) {
+      return null;
+    }
+    return new Date(date).toISOString().split('T')[0];
+  }
+
+  private getSelectedFile(): File | null {
+    const fileInput = document.querySelector(
+      'input[type="file"]'
+    ) as HTMLInputElement;
+    return fileInput?.files?.[0] || null;
+  }
+
+  private handleSuccess(response: any): void {
+    this.spinnerService.hide();
+    this.dialogRef.close(response);
+  }
+
+  private handleError(error: any): void {
+    this.spinnerService.hide();
   }
 }
