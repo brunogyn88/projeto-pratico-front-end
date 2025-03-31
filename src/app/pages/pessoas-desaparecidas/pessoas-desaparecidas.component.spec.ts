@@ -54,4 +54,16 @@ describe('PessoasDesaparecidasComponent', () => {
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should initialize the form and fetch pessoas desaparecidas on ngOnInit', async () => {
+    const initializeFormSpy = jest.spyOn(component, 'initializeForm');
+    const fetchPessoasDesaparecidasSpy = jest.spyOn(
+      component,
+      'fetchPessoasDesaparecidas'
+    );
+
+    component.ngOnInit();
+
+    expect(initializeFormSpy).toHaveBeenCalled();
+  });
 });
