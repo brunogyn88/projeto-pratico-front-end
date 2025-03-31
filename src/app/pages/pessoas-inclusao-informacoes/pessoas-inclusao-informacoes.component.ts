@@ -15,7 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -74,7 +74,8 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private dialog: MatDialogRef<PessoasInclusaoInformacoesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private spinnerService: NgxSpinnerService
   ) {
     this.form = this.fb.group({
       informacao: ['', Validators.required],
@@ -90,43 +91,35 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      const informacao = this.form.get('informacao')?.value;
-      const descricao = this.form.get('descricao')?.value;
-
-      const dataFormatada = new Date(this.form.get('data')?.value)
-        .toISOString()
-        .split('T')[0];
-      const data = dataFormatada;
-      const ocoId = this.data?.id;
+      this.spinnerService.show();
       const formData = new FormData();
+      formData.append('informacao', this.form.get('informacao')?.value);
+      formData.append('descricao', this.form.get('descricao')?.value);
+      const dataValue = this.form.get('data')?.value;
+      if (dataValue) {
+        const dataFormatada = new Date(dataValue).toISOString().split('T')[0];
+        formData.append('data', dataFormatada);
+      }
 
-      // Assuming you have a file input in your form for uploading files
-      let file: File | null = null;
+      formData.append('ocoId', this.data?.id.toString());
+
       const fileInput = document.querySelector(
         'input[type="file"]'
       ) as HTMLInputElement;
       if (fileInput?.files?.length) {
-        file = fileInput.files[0];
+        formData.append('files', fileInput.files[0]);
       }
 
-      this.apiService
-        .salvaInfomacoesDesaparecido(
-          file as File,
-          informacao,
-          descricao,
-          data,
-          ocoId
-        )
-        .subscribe({
-          next: (response) => {
-            this.dialog.close(response);
-          },
-          error: (error) => {
-            console.error('Erro ao salvar informações', error);
-          },
-        });
-    } else {
-      console.log('Form is invalid');
+      this.apiService.salvaInfomacoesDesaparecido(formData).subscribe({
+        next: (response) => {
+          this.spinnerService.hide();
+          this.dialog.close(response);
+        },
+        error: (error) => {
+          this.spinnerService.hide();
+          console.error('Erro ao salvar informações', error);
+        },
+      });
     }
   }
 }
