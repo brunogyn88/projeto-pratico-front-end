@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   PaginatedResponse,
@@ -48,7 +48,9 @@ export class ApiService {
   }
 
   salvaInfomacoesDesaparecido(informacoes: FormData): Observable<any> {
-    const headers = { 'Content-Type': 'multipart/form-data' };
+    const headers = new HttpHeaders({
+      Accept: '*/*',
+    });
     return this.http.post<any>(
       `${this.apiUrl}/ocorrencias/informacoes-desaparecido`,
       informacoes,

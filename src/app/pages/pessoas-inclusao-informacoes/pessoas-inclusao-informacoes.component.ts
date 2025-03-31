@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -20,6 +25,12 @@ import {
   NativeDateAdapter,
 } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { ApiService } from '../../services/api.service';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -56,21 +67,55 @@ const MY_DATE_FORMAT = {
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT },
   ],
 })
-export class PessoasInclusaoInformacoesComponent {
+export class PessoasInclusaoInformacoesComponent implements OnInit {
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private apiService: ApiService,
+    private dialog: MatDialogRef<PessoasInclusaoInformacoesComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
     this.form = this.fb.group({
       informacao: ['', Validators.required],
       descricao: ['', Validators.required],
       data: [null, Validators.required],
-      ocoId: [null, Validators.required],
+      files: [null, Validators.required],
     });
+  }
+
+  ngOnInit(): void {
+    console.log('Dialog Data:', this.data);
   }
 
   onSubmit(): void {
     if (this.form.valid) {
-      console.log(this.form.value);
+      const formData = new FormData();
+      formData.append('informacao', this.form.get('informacao')?.value);
+      formData.append('descricao', this.form.get('descricao')?.value);
+      const dataValue = this.form.get('data')?.value;
+      if (dataValue) {
+        const dataFormatada = new Date(dataValue).toISOString().split('T')[0];
+        formData.append('data', dataFormatada);
+      }
+      formData.append('ocoId', this.data?.id);
+
+      // Assuming you have a file input in your form for uploading files
+      const fileInput = document.querySelector(
+        'input[type="file"]'
+      ) as HTMLInputElement;
+      if (fileInput?.files?.length) {
+        formData.append('files', fileInput.files[0]);
+      }
+
+      this.apiService.salvaInfomacoesDesaparecido(formData).subscribe({
+        next: (response) => {
+          this.dialog.close(response);
+        },
+        error: (error) => {
+          console.error('Erro ao salvar informações', error);
+        },
+      });
     } else {
       console.log('Form is invalid');
     }

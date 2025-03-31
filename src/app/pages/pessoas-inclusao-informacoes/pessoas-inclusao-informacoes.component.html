@@ -51,14 +51,20 @@
       <input
         type="file"
         accept="image/*"
-        formControlName="ocoId"
-        name="ocoId"
+        formControlName="files"
+        name="files"
         class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 cursor-pointer"
       />
     </div>
 
     <!-- Botão de Enviar -->
-    <button mat-raised-button color="primary" class="w-full mt-4">
+    <button
+      mat-raised-button
+      color="primary"
+      class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white cursor-pointer p-4"
+      (click)="onSubmit()"
+      [disabled]="form.invalid"
+    >
       Enviar
     </button>
   </form>

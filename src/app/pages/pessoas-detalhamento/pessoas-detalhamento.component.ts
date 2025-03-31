@@ -76,8 +76,7 @@ export class PessoasDetalhamentoComponent implements OnInit {
     const dialogRef = this.dialog.open(PessoasInclusaoInformacoesComponent, {
       width: '800px',
       data: {
-        title: 'Incluir Mais Informações',
-        message: 'Deseja realmente incluir mais informações para esta pessoa?',
+        id: this.pessoa?.ultimaOcorrencia?.ocoId,
       },
     });
 
