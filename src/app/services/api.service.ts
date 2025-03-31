@@ -47,14 +47,30 @@ export class ApiService {
     );
   }
 
-  salvaInfomacoesDesaparecido(informacoes: FormData): Observable<any> {
+  salvaInfomacoesDesaparecido(
+    file: File,
+    informacao: string,
+    descricao: string,
+    data: string,
+    ocoId: number
+  ): Observable<any> {
     const headers = new HttpHeaders({
       Accept: '*/*',
     });
+    const formData = new FormData();
+    formData.append('files', file, file.name);
+
+    // Monta os parâmetros da URL
+    let params = new HttpParams()
+      .set('informacao', informacao)
+      .set('descricao', descricao)
+      .set('data', data)
+      .set('ocoId', ocoId.toString());
+
     return this.http.post<any>(
       `${this.apiUrl}/ocorrencias/informacoes-desaparecido`,
-      informacoes,
-      { headers }
+      formData,
+      { headers, params }
     );
   }
 }
