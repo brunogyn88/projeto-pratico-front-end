@@ -10,35 +10,31 @@ import {
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'https://abitus-api.geia.vip/v1';
+  private readonly API_URL = 'https://abitus-api.geia.vip/v1';
+  private readonly DEFAULT_HEADERS = new HttpHeaders({ Accept: '*/*' });
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getDesaparecidos(
     params: HttpParams
   ): Observable<PaginatedResponse<PessoaDesaparecida>> {
     return this.http.get<PaginatedResponse<PessoaDesaparecida>>(
-      `${this.apiUrl}/pessoas/aberto/filtro`,
-      {
-        params: params,
-      }
+      `${this.API_URL}/pessoas/aberto/filtro`,
+      { params }
     );
   }
 
-  getDesaparecido(pessoa_id: number): Observable<PessoaDesaparecida> {
+  getDesaparecido(pessoaId: number): Observable<PessoaDesaparecida> {
     return this.http.get<PessoaDesaparecida>(
-      `${this.apiUrl}/pessoas/${pessoa_id}`
+      `${this.API_URL}/pessoas/${pessoaId}`
     );
   }
 
-  salvaInfomacoesDesaparecido(informacoes: FormData): Observable<any> {
-    const headers = new HttpHeaders({
-      Accept: '*/*',
-    });
+  salvarInformacoesDesaparecido(informacoes: FormData): Observable<any> {
     return this.http.post<any>(
-      `${this.apiUrl}/ocorrencias/informacoes-desaparecido`,
+      `${this.API_URL}/ocorrencias/informacoes-desaparecido`,
       informacoes,
-      { headers }
+      { headers: this.DEFAULT_HEADERS }
     );
   }
 }
