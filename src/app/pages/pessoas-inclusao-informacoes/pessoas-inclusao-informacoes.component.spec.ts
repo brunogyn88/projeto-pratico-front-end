@@ -14,7 +14,7 @@ describe('PessoasInclusaoInformacoesComponent', () => {
 
   beforeEach(() => {
     apiService = {
-      salvaInfomacoesDesaparecido: jest.fn(),
+      salvarInformacoesDesaparecido: jest.fn(),
     } as unknown as jest.Mocked<ApiService>;
 
     dialogRef = {
@@ -68,12 +68,12 @@ describe('PessoasInclusaoInformacoesComponent', () => {
     component.onSubmit();
 
     expect(spinnerService.show).not.toHaveBeenCalled();
-    expect(apiService.salvaInfomacoesDesaparecido).not.toHaveBeenCalled();
+    expect(apiService.salvarInformacoesDesaparecido).not.toHaveBeenCalled();
   });
 
   it('should submit the form if it is valid', () => {
     const mockResponse = { success: true };
-    apiService.salvaInfomacoesDesaparecido.mockReturnValue(of(mockResponse));
+    apiService.salvarInformacoesDesaparecido.mockReturnValue(of(mockResponse));
 
     component.form.patchValue({
       informacao: 'Test Info',
@@ -85,14 +85,14 @@ describe('PessoasInclusaoInformacoesComponent', () => {
     component.onSubmit();
 
     expect(spinnerService.show).toHaveBeenCalled();
-    expect(apiService.salvaInfomacoesDesaparecido).toHaveBeenCalled();
+    expect(apiService.salvarInformacoesDesaparecido).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalledWith(mockResponse);
     expect(spinnerService.hide).toHaveBeenCalled();
   });
 
   it('should handle API errors gracefully', () => {
     const mockError = { message: 'Error occurred' };
-    apiService.salvaInfomacoesDesaparecido.mockReturnValue(
+    apiService.salvarInformacoesDesaparecido.mockReturnValue(
       throwError(mockError)
     );
 
@@ -106,7 +106,7 @@ describe('PessoasInclusaoInformacoesComponent', () => {
     component.onSubmit();
 
     expect(spinnerService.show).toHaveBeenCalled();
-    expect(apiService.salvaInfomacoesDesaparecido).toHaveBeenCalled();
+    expect(apiService.salvarInformacoesDesaparecido).toHaveBeenCalled();
     expect(spinnerService.hide).toHaveBeenCalled();
     expect(dialogRef.close).not.toHaveBeenCalled();
   });

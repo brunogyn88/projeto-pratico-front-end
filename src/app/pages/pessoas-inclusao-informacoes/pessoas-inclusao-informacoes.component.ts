@@ -94,7 +94,7 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
     this.spinnerService.show();
     const formData = this.buildFormData();
 
-    this.apiService.salvaInfomacoesDesaparecido(formData).subscribe({
+    this.apiService.salvarInformacoesDesaparecido(formData).subscribe({
       next: (response) => this.handleSuccess(response),
       error: (error) => this.handleError(error),
     });
