@@ -25,45 +25,15 @@ Este é um projeto Angular desenvolvido para o teste prático, atendendo aos req
    ng serve
    ```
 
-   2. **Executar com Docker:**
+2. **Executar com Docker:**
 
-      - **Crie a imagem Docker:**
+   - **Crie a imagem Docker:**
 
-        ```bash
-        docker build -t projeto-angular-teste .
-        ```
+     ```bash
+     docker build -t projeto-angular-teste .
+     ```
 
-      - **Execute o container:**
-        ```bash
-        docker run -p 4200:4200 projeto-angular-teste
-        ```
-
-   ## Dockerfile
-
-   Crie um arquivo `Dockerfile` na raiz do projeto com o seguinte conteúdo:
-
-   ```dockerfile
-   # Use a imagem base do Node.js
-   FROM node:18
-
-   # Defina o diretório de trabalho
-   WORKDIR /app
-
-   # Copie o package.json e o package-lock.json
-   COPY package*.json ./
-
-   # Instale as dependências do projeto
-   RUN npm install
-
-   # Copie o restante do código do projeto
-   COPY . .
-
-   # Construa o projeto Angular
-   RUN npm run build
-
-   # Exponha a porta que a aplicação irá rodar
-   EXPOSE 4200
-
-   # Comando para iniciar a aplicação
-   CMD ["npx", "ng", "serve", "--host", "0.0.0.0"]
-   ```
+   - **Execute o container:**
+     ```bash
+     docker run -p 4200:4200 projeto-angular-teste
+     ```
