@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { MatCardModule } from '@angular/material/card';
@@ -25,7 +25,6 @@ export class PessoasDetalhamentoComponent implements OnInit {
     private readonly apiService: ApiService,
     private readonly spinnerService: NgxSpinnerService,
     private readonly location: Location,
-    private readonly router: Router,
     private readonly dialog: MatDialog
   ) {}
 

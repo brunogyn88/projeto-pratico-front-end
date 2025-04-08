@@ -27,9 +27,7 @@ import { ApiService } from '../../services/api.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 const MY_DATE_FORMAT = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
+  parse: { dateInput: 'DD/MM/YYYY' },
   display: {
     dateInput: 'DD/MM/YYYY',
     monthYearLabel: 'MMMM YYYY',
@@ -51,7 +49,7 @@ const MY_DATE_FORMAT = {
     NgxSpinnerModule,
   ],
   templateUrl: './pessoas-inclusao-informacoes.component.html',
-  styleUrl: './pessoas-inclusao-informacoes.component.scss',
+  styleUrls: ['./pessoas-inclusao-informacoes.component.scss'],
   providers: [
     {
       provide: DateAdapter,
@@ -72,12 +70,12 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private spinnerService: NgxSpinnerService
   ) {
-    this.form = this.createForm();
+    this.form = this.initializeForm();
   }
 
   ngOnInit(): void {}
 
-  private createForm(): FormGroup {
+  private initializeForm(): FormGroup {
     return this.fb.group({
       informacao: ['', Validators.required],
       descricao: ['', Validators.required],
@@ -92,20 +90,22 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
     }
 
     this.spinnerService.show();
-    const formData = this.buildFormData();
+    const formData = this.createFormData();
 
     this.apiService.salvarInformacoesDesaparecido(formData).subscribe({
-      next: (response) => this.handleSuccess(response),
-      error: (error) => this.handleError(error),
+      next: (response) => this.onSuccess(response),
+      error: (error) => this.onError(error),
     });
   }
 
-  private buildFormData(): FormData {
+  private createFormData(): FormData {
     const formData = new FormData();
-    formData.append('informacao', this.form.get('informacao')?.value);
-    formData.append('descricao', this.form.get('descricao')?.value);
+    const { informacao, descricao, data } = this.form.value;
 
-    const formattedDate = this.formatDate(this.form.get('data')?.value);
+    formData.append('informacao', informacao);
+    formData.append('descricao', descricao);
+
+    const formattedDate = this.formatDate(data);
     if (formattedDate) {
       formData.append('data', formattedDate);
     }
@@ -121,10 +121,7 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
   }
 
   private formatDate(date: any): string | null {
-    if (!date) {
-      return null;
-    }
-    return new Date(date).toISOString().split('T')[0];
+    return date ? new Date(date).toISOString().split('T')[0] : null;
   }
 
   private getSelectedFile(): File | null {
@@ -134,12 +131,13 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
     return fileInput?.files?.[0] || null;
   }
 
-  private handleSuccess(response: any): void {
+  private onSuccess(response: any): void {
     this.spinnerService.hide();
     this.dialogRef.close(response);
   }
 
-  private handleError(error: any): void {
+  private onError(error: any): void {
     this.spinnerService.hide();
+    console.error('Error saving information:', error);
   }
 }
