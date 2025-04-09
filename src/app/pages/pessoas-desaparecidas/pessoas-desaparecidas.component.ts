@@ -134,7 +134,9 @@ export class PessoasDesaparecidasComponent implements OnInit {
     this.fetchPessoasDesaparecidas(this.paginaAtual);
   }
 
-  redirectToDetalhamento(id: number): void {
-    this.router.navigate(['/pessoas-detalhamento', id]);
+  redirectToDetalhamento(id: number, ocoId: number): void {
+    this.router.navigate(['/pessoas-detalhamento'], {
+      queryParams: { id, ocoId },
+    });
   }
 }

@@ -60,6 +60,31 @@
         }}<br />
       </p>
     </mat-card>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6"
+    >
+      <h2 class="text-xl font-semibold text-gray-800 col-span-full">
+        Últimas Informações
+      </h2>
+      <mat-card
+        *ngFor="let informacao of informacoesDesaparecidos"
+        class="p-3 bg-gray-100 flex flex-col items-center"
+      >
+        <img
+          class="w-48 h-48 rounded-full border-4 border-gray-300 mb-4"
+          [src]="informacao.anexos[0] || 'assets/sem-imagem.png'"
+          alt="Imagem de {{ informacao.informacao }}"
+          (error)="onImageError($event)"
+        />
+        <h3 class="text-lg font-semibold text-gray-800 text-center">
+          {{ informacao.informacao }}
+        </h3>
+        <p class="text-sm text-gray-600">
+          Data: {{ informacao.data | date : "dd/MM/YYYY" }}
+        </p>
+      </mat-card>
+    </div>
   </div>
 
   <div class="mt-6 flex justify-between">

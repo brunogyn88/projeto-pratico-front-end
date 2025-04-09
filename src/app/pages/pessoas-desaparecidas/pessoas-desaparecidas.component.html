@@ -62,7 +62,7 @@
     <mat-card
       *ngFor="let pessoa of listaPessoasDesaparecidas"
       class="pessoa-card mb-6 hover:shadow-lg transition-shadow duration-300 rounded-lg cursor-pointer inline-block min-w-full"
-      (click)="redirectToDetalhamento(pessoa.id)"
+      (click)="redirectToDetalhamento(pessoa.id, pessoa.ultimaOcorrencia.ocoId)"
     >
       <mat-card-header class="bg-gray-50 p-4">
         <div mat-card-avatar class="example-header-image"></div>

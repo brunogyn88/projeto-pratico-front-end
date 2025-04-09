@@ -19,6 +19,7 @@ import { PessoasInclusaoInformacoesComponent } from '../pessoas-inclusao-informa
 export class PessoasDetalhamentoComponent implements OnInit {
   situacao = 'Desaparecido';
   pessoa: PessoaDesaparecida | null = null;
+  informacoesDesaparecidos: any[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -30,6 +31,7 @@ export class PessoasDetalhamentoComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPessoaDetalhes();
+    this.getInformacoesPessoasDesaparecidas();
   }
 
   private loadPessoaDetalhes(): void {
@@ -39,9 +41,36 @@ export class PessoasDetalhamentoComponent implements OnInit {
     }
   }
 
+  private getInformacoesPessoasDesaparecidas(): void {
+    const ocoId = this.getPessoaOcoIdFromRoute();
+    this.spinnerService.show();
+    if (!ocoId) {
+      this.spinnerService.hide();
+      return;
+    }
+    this.apiService.getInformacoesDesaparecido(ocoId).subscribe({
+      next: (response) => this.handleGetPessoasSuccess(response),
+      error: (error) => this.handleGetPessoasError(error),
+    });
+  }
+
+  private handleGetPessoasError(error: any): void {
+    this.spinnerService.hide();
+  }
+
+  private handleGetPessoasSuccess(response: any): void {
+    this.informacoesDesaparecidos = response || '';
+    this.spinnerService.hide();
+  }
+
   private getPessoaIdFromRoute(): number | null {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.queryParamMap.get('id');
     return id ? Number(id) : null;
+  }
+
+  private getPessoaOcoIdFromRoute(): number | null {
+    const ocoId = this.route.snapshot.queryParamMap.get('ocoId');
+    return ocoId ? Number(ocoId) : null;
   }
 
   private fetchPessoaDetalhes(id: number): void {
@@ -81,6 +110,7 @@ export class PessoasDetalhamentoComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loadPessoaDetalhes();
+        this.getInformacoesPessoasDesaparecidas();
       }
     });
   }

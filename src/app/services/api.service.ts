@@ -37,4 +37,12 @@ export class ApiService {
       { headers: this.DEFAULT_HEADERS }
     );
   }
+
+  getInformacoesDesaparecido(
+    ocorrenciaId: number
+  ): Observable<PessoaDesaparecida> {
+    return this.http.get<PessoaDesaparecida>(
+      `${this.API_URL}/ocorrencias/informacoes-desaparecido?ocorrenciaId=${ocorrenciaId}`
+    );
+  }
 }

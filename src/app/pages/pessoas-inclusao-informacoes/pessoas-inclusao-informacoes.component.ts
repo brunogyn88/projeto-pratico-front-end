@@ -138,6 +138,5 @@ export class PessoasInclusaoInformacoesComponent implements OnInit {
 
   private onError(error: any): void {
     this.spinnerService.hide();
-    console.error('Error saving information:', error);
   }
 }

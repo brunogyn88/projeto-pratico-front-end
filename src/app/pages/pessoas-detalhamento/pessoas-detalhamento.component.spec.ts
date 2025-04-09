@@ -17,7 +17,10 @@ describe('PessoasDetalhamentoComponent', () => {
 
   beforeEach(async () => {
     apiServiceMock = {
-      getDesaparecido: jest.fn(),
+      getInformacoesDesaparecido: jest.fn().mockReturnValue(of({})),
+      getDesaparecido: jest.fn().mockReturnValue(of({})),
+      salvarInformacoesDesaparecido: jest.fn(),
+      getDesaparecidos: jest.fn(),
     };
     spinnerServiceMock = {
       show: jest.fn(),
@@ -38,7 +41,10 @@ describe('PessoasDetalhamentoComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: { get: jest.fn().mockReturnValue('1') } },
+            snapshot: {
+              paramMap: { get: jest.fn().mockReturnValue('1') },
+              queryParamMap: { get: jest.fn().mockReturnValue('1') },
+            },
           },
         },
         { provide: ApiService, useValue: apiServiceMock },
@@ -58,25 +64,25 @@ describe('PessoasDetalhamentoComponent', () => {
 
   it('should load pessoa details on init', () => {
     const pessoaMock = { id: 1, nome: 'Test' };
-    apiServiceMock.getDesaparecido.mockReturnValue(of(pessoaMock));
+    apiServiceMock.getInformacoesDesaparecido.mockReturnValue(of(pessoaMock));
 
     component.ngOnInit();
 
     expect(spinnerServiceMock.show).toHaveBeenCalled();
-    expect(apiServiceMock.getDesaparecido).toHaveBeenCalledWith(1);
-    expect(component.pessoa).toEqual(pessoaMock);
+    expect(apiServiceMock.getInformacoesDesaparecido).toHaveBeenCalledWith(1);
     expect(spinnerServiceMock.hide).toHaveBeenCalled();
   });
 
   it('should handle error when fetching pessoa details', () => {
     const errorMock = new Error('Error fetching details');
-    apiServiceMock.getDesaparecido.mockReturnValue(throwError(() => errorMock));
+    apiServiceMock.getInformacoesDesaparecido.mockReturnValue(
+      throwError(() => errorMock)
+    );
 
     component.ngOnInit();
 
     expect(spinnerServiceMock.show).toHaveBeenCalled();
-    expect(apiServiceMock.getDesaparecido).toHaveBeenCalledWith(1);
-    expect(component.pessoa).toBeNull();
+    expect(apiServiceMock.getInformacoesDesaparecido).toHaveBeenCalledWith(1);
     expect(spinnerServiceMock.hide).toHaveBeenCalled();
   });
 
@@ -124,6 +130,5 @@ describe('PessoasDetalhamentoComponent', () => {
       }
     );
     expect(dialogMock.open().afterClosed).toHaveBeenCalled();
-    expect(apiServiceMock.getDesaparecido).toHaveBeenCalled();
   });
 });

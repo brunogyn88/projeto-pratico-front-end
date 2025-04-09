@@ -9,7 +9,7 @@ export const routes: Routes = [
       ).then((m) => m.PessoasDesaparecidasComponent),
   },
   {
-    path: 'pessoas-detalhamento/:id',
+    path: 'pessoas-detalhamento',
     loadComponent: () =>
       import(
         './pages/pessoas-detalhamento/pessoas-detalhamento.component'
